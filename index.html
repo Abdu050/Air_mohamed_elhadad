@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامج حساب شفاطات عنبر الدواجن | م. محمد الحداد</title>
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --primary-light: #2e7d32;
+            --accent: #4caf50;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #dcedc8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e4620 0%, #2e7d32 50%, #1b5e20 100%) !important;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-screen h1 {
+            color: var(--primary);
+            font-size: 26px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            font-weight: 700;
+        }
+
+        .welcome-screen .engineer-name {
+            font-size: 18px;
+            color: var(--primary-light);
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #e8f5e9;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.05);
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e8f5e9;
+            border-top: 4px solid var(--primary-light);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timer-msg {
+            font-size: 15px;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        #countdownNumber {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 18px;
+            background: #ffebee;
+            padding: 2px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4);
+        }
+
+        .welcome-rights {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-top: 1px dashed #dcedc8;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .app-main {
+            display: none;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #34495e;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            box-sizing: border-box;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            user-select: text;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+        }
+
+        .section-title {
+            background-color: #e8f5e9;
+            color: var(--primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 25px 0 15px 0;
+            font-weight: bold;
+            font-size: 15px;
+            border-right: 5px solid var(--primary-light);
+            grid-column: span 2;
+        }
+
+        .calc-btn {
+            grid-column: span 2;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.2);
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.35);
+        }
+
+        .footer-rights {
+            grid-column: span 2;
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px dashed #dcedc8;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: scaleUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+            border-top: 6px solid var(--primary-light);
+        }
+
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .result-item {
+            margin: 14px 0;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            background: #fcfcfc;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        .result-item span {
+            font-weight: bold;
+            color: var(--primary-light);
+        }
+
+        .timer-section {
+            margin-top: 20px;
+            background: #fffdf3;
+            border: 1px solid #ffe082;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .timer-section h4 {
+            color: #f57f17;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .modal-footer-rights {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: bold;
+            border-top: 1px dashed #eee;
+            padding-top: 10px;
+        }
+
+        .close-btn {
+            width: 100%;
+            background-color: #e74c3c;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .close-btn:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width, .section-title, .calc-btn, .footer-rights {
+                grid-column: span 1;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- الصفحة الافتتاحية -->
+        <div id="welcomeScreen" class="welcome-screen">
+            <h1>حساب عدد الشفاطات اللازمة لتهوية عنابر الدواجن</h1>
+            <div class="engineer-name"> برمجة و تصميم: م/ محمد الحداد</div>
+            
+            <div class="loader"></div>
+            <div class="timer-msg">
+                يتم التحميل... سيتم فتح البرنامج خلال <span id="countdownNumber">10</span> ثوانٍ
+            </div>
+
+            <button class="start-btn" onclick="startApp()">ابدأ الآن</button>
+            <div class="welcome-rights">جميع الحقوق محفوظة © م. محمد الحداد</div>
+        </div>
+
+        <!-- التطبيق الرئيسي -->
+        <div id="appMain" class="app-main">
+            <h2>حساب عدد الشفاطات اللازم للعنبر</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="systemType">نوع نظام العنبر:</label>
+                    <select id="systemType">
+                        <option value="closed">نظام مغلق كامل (Tunnel)</option>
+                        <option value="semi-closed">نظام نصف مغلق (Semi-Closed)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ventilationGoal">نوع أو هدف التهوية:</label>
+                    <select id="ventilationGoal">
+                        <option value="max">تهوية قصوى (للعمر الكبير او ذروة الحرارة)</option>
+                        <option value="min">تهوية دنيا (للتحضين أو الشتاء)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="season">فصل السنة الحالي:</label>
+                    <select id="season">
+                        <option value="summer">الصيف</option>
+                        <option value="spring_fall"> الخريف</option>
+					    <option value="spring_fall">الربيع  </option>
+                        <option value="winter">الشتاء</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeOfDay">وقت اليوم:</label>
+                    <select id="timeOfDay">
+                        <option value="day">النهار</option>
+                        <option value="night">الليل</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="insulation">العزل الحراري للعنبر:</label>
+                    <select id="insulation">
+                        <option value="yes">معزول حرارياً (جيد)</option>
+                        <option value="no">غير معزول حرارياً (يضاف معامل أمان 10% للحرارة)</option>
+                    </select>
+                </div>
+
+                <div class="section-title"> بيانات أبعاد العنبر الأساسية</div>
+                
+                <div class="form-group">
+                    <label for="length">طول العنبر (متر):</label>
+                    <input type="number" id="length" placeholder="مثال: 50" step="0.1" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="width">عرض العنبر (متر):</label>
+                    <input type="number" id="width" placeholder="مثال: 12" step="0.1" autocomplete="off">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="height">ارتفاع العنبر (متر - متوسط الجوانب والقمة):</label>
+                    <input type="number" id="height" placeholder="مثال: 3" step="0.1" autocomplete="off">
+                </div>
+
+                <div class="section-title"> بيانات الطيور والعمر والوزن</div>
+
+                <div class="form-group">
+                    <label for="birdAge">عمر الفراخ (بالأيام):</label>
+                    <input type="number" id="birdAge" placeholder="مثال: 30" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="birdsCount">عدد الطيور الإجمالي:</label>
+                    <input type="number" id="birdsCount" placeholder="مثال: 10000" autocomplete="off">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="birdWeight">متوسط الوزن الحي للطائر (كجم):</label>
+                    <input type="number" id="birdWeight" placeholder="مثال: 2.5" step="0.1" autocomplete="off">
+                </div>
+
+                <div class="section-title">مواصفات الشفاطات والتشغيل</div>
+
+                <div class="form-group">
+                    <label for="fanCapacity">قدرة الشفاط الواحد (CMH):</label>
+                    <input type="number" id="fanCapacity" placeholder="مثال: 40000" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="cycleMinutes">زمن دورة التايمر (دقائق):</label>
+                    <input type="number" id="cycleMinutes" placeholder="مثال: 5" autocomplete="off">
+                </div>
+
+                <button class="calc-btn" onclick="calculateFans()">احسب عدد الشفاطات ونظام التايمر</button>
+
+                <!-- حقوق الملكية في أسفل التطبيق -->
+                <div class="footer-rights">
+                    جميع الحقوق محفوظة © م. محمد الحداد
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة النتائج المنبثقة -->
+    <div id="resultModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>نتائج الحسابات الهندسية</h3>
+            <div class="result-item">نظام العنبر: <span id="resSystemType">0</span></div>
+            <div class="result-item">هدف التهوية: <span id="resVentGoal">0</span></div>
+            <div class="result-item">عمر القطيع: <span id="resBirdAge">0</span> يوم</div>
+            <div class="result-item">فصل السنة: <span id="resSeason">0</span></div>
+            <div class="result-item">وقت اليوم: <span id="resTimeOfDay">0</span></div>
+            <div class="result-item">حالة العزل: <span id="resInsulation">0</span></div>
+            <div class="result-item">إجمالي الهواء المطلوب: <span id="resTotalAir">0</span> م³/ساعة</div>
+            <div class="result-item">عدد الشفاطات (بالتحديد): <span id="resExactFans">0</span></div>
+            <div class="result-item">عدد الشفاطات المطلوبة: <span id="resFinalFans">0</span> شفاط</div>
+
+            <div class="timer-section">
+                <h4>نظام التشغيل المتقطع (التايمر - Timer Cycle):</h4>
+                <div class="result-item">نسبة التشغيل المطلوبة: <span id="resRunPercentage">0</span>%</div>
+                <div class="result-item">وقت الـتشـغيل (ON): <span id="resOnTime">0</span></div>
+                <div class="result-item">وقت الـتوقف (OFF): <span id="resOffTime">0</span></div>
+            </div>
+
+            <div class="modal-footer-rights">
+                جميع الحقوق محفوظة © م. محمد الحداد
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">إغلاق وتعديل البيانات</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F12' || 
+                (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) || 
+                (event.ctrlKey && event.key === 'U')) {
+                event.preventDefault();
+                alert('عذراً، هذه الصفحة محمية لحفظ حقوق الملكية الفكرية (م. محمد الحداد).');
+                return false;
+            }
+        });
+
+        let timeLeft = 10;
+        let countdownElement = document.getElementById('countdownNumber');
+
+        let countdownInterval = setInterval(function() {
+            timeLeft--;
+            if(countdownElement) {
+                countdownElement.innerText = timeLeft;
+            }
+            if(timeLeft <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        let welcomeTimer = setTimeout(function() {
+            startApp();
+        }, 10000);
+
+        function startApp() {
+            clearTimeout(welcomeTimer);
+            clearInterval(countdownInterval);
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('appMain').style.display = 'block';
+        }
+
+        window.onload = function() {
+            document.getElementById('length').value = '';
+            document.getElementById('width').value = '';
+            document.getElementById('height').value = '';
+            document.getElementById('birdAge').value = '';
+            document.getElementById('birdsCount').value = '';
+            document.getElementById('birdWeight').value = '';
+            document.getElementById('fanCapacity').value = '';
+            document.getElementById('cycleMinutes').value = '';
+        };
+
+        function calculateFans() {
+            let length = document.getElementById('length').value.trim();
+            let width = document.getElementById('width').value.trim();
+            let height = document.getElementById('height').value.trim();
+            let birdAge = document.getElementById('birdAge').value.trim();
+            let birdsCount = document.getElementById('birdsCount').value.trim();
+            let birdWeight = document.getElementById('birdWeight').value.trim();
+            let fanCapacity = document.getElementById('fanCapacity').value.trim();
+            let cycleMinutes = document.getElementById('cycleMinutes').value.trim();
+
+            // التحقق من أن جميع الحقول غير فاضية
+            if (length === '' || width === '' || height === '' || birdAge === '' || birdsCount === '' || birdWeight === '' || fanCapacity === '' || cycleMinutes === '') {
+                alert('⚠️ تنبيه هام: يرجى ملء جميع حقول البيانات المطلوبة وعدم ترك أي خانة فارغة.');
+                return;
+            }
+
+            let l = parseFloat(length);
+            let w = parseFloat(width);
+            let h = parseFloat(height);
+            let bAge = parseInt(birdAge);
+            let bCount = parseFloat(birdsCount);
+            let bWeight = parseFloat(birdWeight);
+            let fCap = parseFloat(fanCapacity);
+            let cMin = parseFloat(cycleMinutes);
+
+            if (fCap <= 0 || cMin <= 0 || l <= 0 || w <= 0 || h <= 0 || bAge <= 0 || bCount <= 0 || bWeight <= 0) {
+                alert('⚠️ يرجى التأكد من أن جميع المدخلات تحتوي على قيم صحيحة أكبر من الصفر.');
+                return;
+            }
+
+            let systemType = document.getElementById('systemType').value;
+            let ventilationGoal = document.getElementById('ventilationGoal').value;
+            let season = document.getElementById('season').value;
+            let timeOfDay = document.getElementById('timeOfDay').value;
+            let insulation = document.getElementById('insulation').value;
+
+            let baseAirPerKg = (systemType === 'closed') ? 4.5 : 3.5;
+
+            // حساب الكتلة الحية الإجمالية
+            let totalWeight = bCount * bWeight;
+            let totalAir = totalWeight * baseAirPerKg;
+
+            let goalText = 'تهوية قصوى';
+            if (ventilationGoal === 'min') {
+                totalAir = totalAir * 0.22; 
+                goalText = 'تهوية دنيا (Minimum Ventilation)';
+            } else {
+                let seasonFactor = 1.0;
+                if (season === 'spring_fall') seasonFactor = 0.60;
+                else if (season === 'winter') seasonFactor = 0.35;
+                totalAir = totalAir * seasonFactor;
+            }
+
+            let timeText = 'النهار';
+            if (timeOfDay === 'night') {
+                totalAir = totalAir * 0.85;
+                timeText = 'الليل (تخفيض 15% لهدوء الطيور)';
+            }
+
+            let insulationText = 'معزول حرارياً (جيد)';
+            if (insulation === 'no' && ventilationGoal === 'max' && season === 'summer' && timeOfDay === 'day') {
+                totalAir = totalAir * 1.10;
+                insulationText = 'غير معزول (+10% أمان للحرارة نهاراً)';
+            } else if (insulation === 'no') {
+                insulationText = 'غير معزول حرارياً';
+            }
+
+            let exactFans = totalAir / fCap;
+            let finalFans = Math.ceil(exactFans); 
+            if (finalFans < 1) finalFans = 1;
+
+            let totalInstalledCapacity = finalFans * fCap;
+            let ratio = totalAir / totalInstalledCapacity;
+            if (ratio > 1) ratio = 1;
+
+            let onTimeMinutes = cMin * ratio;
+            let offTimeMinutes = cMin - onTimeMinutes;
+
+            let systemText = (systemType === 'closed') ? 'نظام مغلق كامل (Tunnel)' : 'نظام نصف مغلق (Semi-Closed)';
+            let seasonText = '';
+            if (season === 'summer') seasonText = 'الصيف';
+            else if (season === 'spring_fall') seasonText = 'الربيع / الخريف';
+            else seasonText = 'الشتاء';
+
+            document.getElementById('resSystemType').innerText = systemText;
+            document.getElementById('resVentGoal').innerText = goalText;
+            document.getElementById('resBirdAge').innerText = bAge;
+            document.getElementById('resSeason').innerText = seasonText;
+            document.getElementById('resTimeOfDay').innerText = timeText;
+            document.getElementById('resInsulation').innerText = insulationText;
+            document.getElementById('resTotalAir').innerText = Math.round(totalAir).toLocaleString();
+            document.getElementById('resExactFans').innerText = exactFans.toFixed(2);
+            document.getElementById('resFinalFans').innerText = finalFans;
+
+            document.getElementById('resRunPercentage').innerText = (ratio * 100).toFixed(1);
+            document.getElementById('resOnTime').innerText = `${onTimeMinutes.toFixed(2)} دقيقة (${(onTimeMinutes * 60).toFixed(0)} ثانية)`;
+            document.getElementById('resOffTime').innerText = `${offTimeMinutes.toFixed(2)} دقيقة (${(offTimeMinutes * 60).toFixed(0)} ثانية)`;
+
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
